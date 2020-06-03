@@ -13,3 +13,6 @@ In this example, we will learn, how to name directories, files and module names.
 In this example, we will learn about structs
 * [struct_example.ex](https://github.com/koladilip/elixir-examples/blob/master/lib/struct_example.ex) is basic struct
 * [complex_struct_example.ex](https://github.com/koladilip/elixir-examples/blob/master/lib/complex_struct_example.ex) is complex struct which uses the basic struct
+
+## Exercism
+This repo contains my solutions to https://github.com/exercism/elixir
