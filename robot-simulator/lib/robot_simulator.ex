@@ -4,7 +4,7 @@ defmodule RobotSimulator do
   end
 
   defp list_contains(list, item) do
-    Enum.any?(list, &(&1 == item))
+    item in list
   end
 
   defp next_direction(direction, move) do
