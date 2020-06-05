@@ -18,7 +18,7 @@ defmodule Markdown do
   defp merge_lists({full_list, current_list}) do
     case current_list do
       [] -> full_list
-      current_list -> full_list ++ [current_list]
+      current_list ->  [Enum.reverse(current_list) | full_list]
     end
   end
 
@@ -26,11 +26,11 @@ defmodule Markdown do
    lines = String.split(m, "\n")
    {full_list, current_list} = List.foldl(lines, {[], []}, fn (line, {fl, cl}) ->
     cond do
-      String.starts_with?(line, "*") -> {fl, cl ++ [line]}
-      true -> {merge_lists({fl, cl}) ++ [line], []}
+      String.starts_with?(line, "*") -> {fl, [line | cl]}
+      true -> {[line | merge_lists({fl, cl})], []}
     end
    end )
-   merge_lists({full_list, current_list})
+   Enum.reverse(merge_lists({full_list, current_list}))
   end
 
   defp process(t) do
