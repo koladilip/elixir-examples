@@ -36,28 +36,29 @@ defmodule Markdown do
   defp process(t) do
     cond do
       is_list(t) -> parse_list_md_level(t)
-      String.starts_with?(t, "#") -> enclose_with_header_tag(parse_header_md_level(t))
-      true -> enclose_with_paragraph_tag(String.split(t))
+      String.starts_with?(t, "#") -> parse_header_md_level(t)
+      true -> parse_paragraph_md_level(String.split(t))
     end
   end
 
   defp parse_header_md_level(hwt) do
     [h | t] = String.split(hwt)
-    {String.length(h), Enum.join(t, " ")}
+    Enum.join(t, " ") |> enclose_with_tag("h#{String.length(h)}")
   end
 
   defp parse_list_md_level(l) do
-    "<ul>" <> Enum.map_join(l, fn t ->
-      "<li>#{join_words_with_tags(String.split(String.trim_leading(t, "* ")))}</li>"
-    end) <> "</ul>"
+    Enum.map_join(l, fn t ->
+      t |> String.trim_leading("* ") |> String.split()
+      |> join_words_with_tags() |> enclose_with_tag("li")
+    end) |> enclose_with_tag("ul")
   end
 
-  defp enclose_with_header_tag({hl, htl}) do
-    "<h#{hl}>#{htl}</h#{hl}>"
+  defp parse_paragraph_md_level(l) do
+    join_words_with_tags(l) |> enclose_with_tag("p")
   end
 
-  defp enclose_with_paragraph_tag(t) do
-    "<p>#{join_words_with_tags(t)}</p>"
+  defp enclose_with_tag(content, tag) do
+    "<#{tag}>#{content}</#{tag}>"
   end
 
   defp join_words_with_tags(t) do
@@ -65,14 +66,18 @@ defmodule Markdown do
   end
 
   defp replace_md_with_tag(w) do
-    replace_suffix_md(replace_prefix_md(w))
+    w |> replace_prefix_md() |> replace_suffix_md()
   end
 
   defp replace_prefix_md(w) do
-    String.replace(String.replace(w, ~r/^__/, "<strong>"), ~r/^_/, "<em>")
+    w
+    |>String.replace_prefix("__", "<strong>")
+    |>String.replace_prefix("_", "<em>")
   end
 
   defp replace_suffix_md(w) do
-    String.replace(String.replace(w, ~r/__$/, "</strong>"), ~r/_$/, "</em>")
+    w
+    |>String.replace_suffix("__", "</strong>")
+    |>String.replace_suffix("_", "</em>")
   end
 end
