@@ -16,7 +16,7 @@ defmodule Zipper do
   """
   @spec to_tree(Zipper.t()) :: BinTree.t()
   def to_tree(zipper) do
-    zipper.root
+    update_zipper(zipper).root
   end
 
   @doc """
@@ -53,8 +53,13 @@ defmodule Zipper do
   @spec up(Zipper.t()) :: Zipper.t() | nil
   def up(zipper) do
     if zipper.path != [] do
-      [{parent, _} | ancestors] = zipper.path
-      %{%{zipper | focus: parent} | path: ancestors}
+      [{parent, direction} | ancestors] = zipper.path
+      new_parent = Map.put(parent, direction, zipper.focus)
+      cond do
+        ancestors == [] ->
+           %{%{%{zipper | focus: new_parent} | path: []} | root: new_parent}
+        true -> %{%{zipper | focus: new_parent} | path: ancestors}
+      end
     end
   end
 
@@ -70,7 +75,7 @@ defmodule Zipper do
   """
   @spec set_value(Zipper.t(), any) :: Zipper.t()
   def set_value(zipper, value) do
-    update_zipper(%{zipper | focus: %{ zipper.focus | value: value}})
+    %{zipper | focus: %{ zipper.focus | value: value}}
   end
 
   @doc """
@@ -78,7 +83,7 @@ defmodule Zipper do
   """
   @spec set_left(Zipper.t(), BinTree.t() | nil) :: Zipper.t()
   def set_left(zipper, left) do
-    update_zipper(%{zipper | focus: %{ zipper.focus | left: left}})
+    %{zipper | focus: %{ zipper.focus | left: left}}
   end
 
   @doc """
@@ -86,6 +91,6 @@ defmodule Zipper do
   """
   @spec set_right(Zipper.t(), BinTree.t() | nil) :: Zipper.t()
   def set_right(zipper, right) do
-    update_zipper(%{zipper | focus: %{ zipper.focus | right: right}})
+    %{zipper | focus: %{ zipper.focus | right: right}}
   end
 end
