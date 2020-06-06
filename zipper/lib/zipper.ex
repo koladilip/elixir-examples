@@ -61,9 +61,9 @@ defmodule Zipper do
   defp update_zipper(zipper) do
     %{path: new_path, current: new_root} = List.foldl(zipper.path, %{path: [], current: zipper.focus }, fn ({node, direction}, acc) ->
       new_node = Map.put(node, direction, acc.current)
-      %{%{acc | path: {new_node, direction}} | current: new_node}
+      %{%{acc | path: [{new_node, direction} | acc.path]} | current: new_node}
     end )
-    %{%{zipper | path: new_path} | root: new_root}
+    %{%{zipper | path: Enum.reverse(new_path)} | root: new_root}
   end
   @doc """
   Set the value of the focus node.

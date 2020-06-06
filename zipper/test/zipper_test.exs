@@ -12,6 +12,8 @@ defmodule ZipperTest do
   defp t4, do: bt(1, leaf(2), leaf(4))
   defp t5, do: bt(1, bt(2, nil, leaf(3)), bt(6, leaf(7), leaf(8)))
   defp t6, do: bt(1, bt(2, nil, leaf(5)), leaf(4))
+  defp t7, do: bt(1, bt(2, nil, leaf(3)), bt(10, leaf(7), leaf(8)))
+  defp t8, do: bt(1, bt(2, nil, leaf(3)), bt(6, leaf(7), leaf(10)))
 
   # #@tag :pending
   test "data is retained" do
@@ -59,6 +61,10 @@ defmodule ZipperTest do
     assert t1() |> from_tree() |> left() |> set_left(leaf(5)) |> to_tree() == t3()
   end
 
+  test "set_left with leaf and move left" do
+    assert t1() |> from_tree() |> left() |> set_left(leaf(5)) |> left() |> to_tree() == t3()
+  end
+
   #@tag :pending
   test "set_right with nil" do
     assert t1() |> from_tree() |> left() |> set_right(nil) |> to_tree() == t4()
@@ -67,6 +73,16 @@ defmodule ZipperTest do
   #@tag :pending
   test "set_right with subtree" do
     assert t1() |> from_tree() |> set_right(bt(6, leaf(7), leaf(8))) |> to_tree() == t5()
+  end
+
+  test "set_right with subtree, move right and set value" do
+    assert t1() |> from_tree() |> set_right(bt(6, leaf(7), leaf(8))) |> right()
+    |> set_value(10) |> to_tree() == t7()
+  end
+
+  test "set_right with subtree, move rigth and up and set value" do
+    assert t1() |> from_tree() |> set_right(bt(6, leaf(7), leaf(8))) |> right() |>
+    right() |> set_value(10) |> up() |> up() |> to_tree() == t8()
   end
 
   #@tag :pending
