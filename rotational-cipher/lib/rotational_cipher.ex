@@ -14,10 +14,10 @@ defmodule RotationalCipher do
 
   defp rotate_char(ch, shift) do
     cond do
-      65 <= ch and ch <= (90 - shift)  -> ch + shift
-      (90 - shift) < ch and ch <= 90 -> ch + shift - 26
-      97 <= ch and ch <= (122 - shift)  -> ch + shift
-      122 - shift < ch and ch <= 122 -> ch + shift - 26
+      ?A <= ch and ch <= (?Z - shift)  -> ch + shift
+      (?Z - shift) < ch and ch <= ?Z -> ch + shift - 26
+      ?a <= ch and ch <= (?z - shift)  -> ch + shift
+      ?z - shift < ch and ch <= ?z -> ch + shift - 26
       true -> ch
     end
   end
